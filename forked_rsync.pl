@@ -22,16 +22,8 @@ use Getopt::Long;
 my @exclude = ();
 &GetOptions   ("excludedir=s"       => \@exclude) || die("unknown option");
 
-push(@exclude,"/home/mcw/log/");
-push(@exclude,"/home/mcw/lock/");
-push(@exclude,"/home/mcw/mcw_jms/tickets/");
-push(@exclude,"/home/mcw/dataProcessing/importd/control/");
-push(@exclude,"/home/mcw/dataProcessing/importd/spool/");
-push(@exclude,"/home/mcw/dataProcessing/importd/split/");
-push(@exclude,"/home/mcw/dataProcessing/importd/work/");
-push(@exclude,"/home/mcw/dataProcessing/importd/tmp/");
-push(@exclude,"/home/mcw/dataProcessing/importd/old_importfiles/");
-push(@exclude,"/home/mcw/webInterfaces/fax/.htaccess");
+push(@exclude,"/example/log/");
+push(@exclude,"/example/.htaccess");
 
 for (@exclude)
 {
@@ -42,8 +34,9 @@ for (@exclude)
 my $maxproc_each_recursion  = 3;
 my $maxrecursion            = 5;
 my $recursion               = 0;    # DO NOT CHANGE
-my $sourcedir   = "/home/mcw/";
-my $destdir     = "quebec::mcw";
+my $sourcedir   = "/example/";
+my $destdir     = "hostname::destination";
+my $logdir      = "/tmp";
 
 $sourcedir =~ s/\/+$//; #/
 $destdir =~ s/\/+$//; #/
@@ -60,8 +53,7 @@ if ($destdir =~ /'/)
     exit 1;
 }
 
-#my $cmd  = 'rsync -avv --delete --force -e "ssh -i /root/.ssh/id_dsa" %s "%s/" "%s" > /tmp/rsync.%s.NY 2>&1';
-my $cmd  = 'rsync -avv %s --delete --force %s %s %s 1>/tmp/rsync.%s.out 2>/tmp/rsync.%s.err';
+my $cmd  = 'rsync -avv %s --delete --force %s %s %s 1>'.${logdir}.'/rsync.%s.out 2>'.${logdir}.'/rsync.%s.err';
 
 print gmtime()."\t$$\tSTART\n";
 chdir($sourcedir) || die ("cannot chdir to $sourcedir: $!");
